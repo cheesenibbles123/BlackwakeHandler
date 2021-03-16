@@ -38,7 +38,7 @@ exports.handler = async function(type, steamID) {
 	if (validateString([type,steamID])){
 		let public = await checkIfPrivate(steamID);
 		if (public){
-			let data = await queryFor(type,steamID);
+			let data = await queryFor(type.toLowerCase(),steamID);
 			return data;
 		}else{
 			return "User profile is set to private.";
@@ -162,7 +162,7 @@ function overview(data){
 
 function shipstats(data){
 	let shipStats = [];
-	
+
 	for (i=0;i<data.length;i++){
 		if (ships.indexOf(stats[i].name) !== -1){
 			shipStats.push(stats[i]);
