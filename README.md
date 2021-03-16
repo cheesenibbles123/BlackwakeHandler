@@ -44,7 +44,9 @@ Success
 {
 	isvalid : true,
 	type : type,
-	content : {}
+	content : {
+		// Resulting Content
+	}
 }
 ```
 
@@ -52,9 +54,9 @@ Fail
 
 ```js
 {
-	isvalid : false,
+	isvalid : true,
 	type : type,
-	content : {}
+	content : "Error Message"
 }
 ```
 
