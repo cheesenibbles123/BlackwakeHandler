@@ -9,7 +9,7 @@ npm install @cheesenibbles/blackwakehandler
 ## Usage
 
 ```js
-const bw = require('blackwakehandle');
+const bw = require('blackwakehandler');
 bw.init(/*Your steamAPI key here*/);
 bw.handler(type,steamID64);
 ```
