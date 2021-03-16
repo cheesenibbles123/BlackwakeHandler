@@ -8,3 +8,9 @@ bw.init(/*Your steamAPI key here*/);
 bw.handler(type,steamID64);
 ```
 
+## Types
+
+- Overview
+- WeaponStats
+- ShipStats
+- ShipWeaponry
