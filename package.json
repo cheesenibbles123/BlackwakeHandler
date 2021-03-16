@@ -1,6 +1,6 @@
 {
   "name": "@cheesenibbles123/blackwakehandler",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Simple package to allow easier interaction with setting up and getting blackwake data through the steamapi",
   "main": "index.js",
   "author": "Cheesenibbles123",
