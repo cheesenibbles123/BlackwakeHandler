@@ -37,7 +37,6 @@ function validateString(tests){
 exports.handler = async function(type, steamID) {
 	if (validateString([type,steamID])){
 		let public = await checkIfPrivate(steamID);
-		console.log(public);
 		if (public){
 			let data = await queryFor(type.toLowerCase(),steamID);
 			return data;
