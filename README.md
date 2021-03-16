@@ -3,7 +3,7 @@ Simple npm package to allow easier usage to blackwake commands.
 ## Install
 
 ```text
-npm install @cheesenibbles/blackwakehandler
+npm install @cheesenibbles123/blackwakehandler
 ```
 
 ## Usage
