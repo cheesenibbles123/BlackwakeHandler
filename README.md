@@ -16,10 +16,12 @@ let data = await bw.handler('type','steamID64');
 
 ## Types
 
-- Overview
-- WeaponStats
-- ShipStats
-- ShipWeaponry
+- [Overview](#overview)
+- [WeaponStats](#weaponstats)
+- [ShipStats](#shipstats)
+- [ShipWeaponry](#shipweaponry)
+- [Maintenance](#maintenance)
+- [Misc](misc)
 
 ## Example Usage
 
@@ -92,6 +94,48 @@ Fail
 }
 ```
 
+### WeaponStats
+
+```js
+{
+	isValid : true,
+	type : 'weaponstats',
+	content : {
+		individual: {
+		    acc_mus: 3254,
+		    acc_blun: 247,
+		    acc_nock: 7146,
+		    acc_ann: 231,
+		    acc_rev: 1,
+		    acc_pis: 713,
+		    acc_duck: 4642,
+		    acc_mpis: 170,
+		    acc_cut: 159,
+		    acc_dag: 158,
+		    acc_bot: 153,
+		    acc_tomo: 158,
+		    acc_gren: 287,
+		    acc_rap: 2016
+		},
+		formatted: 'Nockgun - 7146 kills\n' +
+		    'Duckfoot - 4642 kills\n' +
+		    'Musket - 3254 kills\n' +
+		    'Rapier - 2016 kills\n' +
+		    'Pistol - 713 kills\n' +
+		    'Grenade - 287 kills\n' +
+		    'Blunderbuss - 247 kills\n' +
+		    'Annley - 231 kills\n' +
+		    'Short Pistol - 170 kills\n' +
+		    'Cutlass - 159 kills\n' +
+		    'Dagger - 158 kills\n' +
+		    'Tomohawk - 158 kills\n' +
+		    'Bottle - 153 kills\n' +
+		    'Revolver - 1 kills\n' +
+		    'Total: 19335'
+	}
+}
+```
+
 ### ShipStats
 
 ```js
@@ -157,49 +201,6 @@ Fail
 		    'Grapeshot - 664 kills\n' +
 		    'Fireshot - 141 kills\n' +
 		    'Total: 25063'
-	}
-}
-```
-
-
-### WeaponStats
-
-```js
-{
-	isValid : true,
-	type : 'weaponstats',
-	content : {
-		individual: {
-		    acc_mus: 3254,
-		    acc_blun: 247,
-		    acc_nock: 7146,
-		    acc_ann: 231,
-		    acc_rev: 1,
-		    acc_pis: 713,
-		    acc_duck: 4642,
-		    acc_mpis: 170,
-		    acc_cut: 159,
-		    acc_dag: 158,
-		    acc_bot: 153,
-		    acc_tomo: 158,
-		    acc_gren: 287,
-		    acc_rap: 2016
-		},
-		formatted: 'Nockgun - 7146 kills\n' +
-		    'Duckfoot - 4642 kills\n' +
-		    'Musket - 3254 kills\n' +
-		    'Rapier - 2016 kills\n' +
-		    'Pistol - 713 kills\n' +
-		    'Grenade - 287 kills\n' +
-		    'Blunderbuss - 247 kills\n' +
-		    'Annley - 231 kills\n' +
-		    'Short Pistol - 170 kills\n' +
-		    'Cutlass - 159 kills\n' +
-		    'Dagger - 158 kills\n' +
-		    'Tomohawk - 158 kills\n' +
-		    'Bottle - 153 kills\n' +
-		    'Revolver - 1 kills\n' +
-		    'Total: 19335'
 	}
 }
 ```
