@@ -226,30 +226,40 @@ async function shipstats(data){
 function shipweaponry(data){
 	return new Promise((resolve,reject) => {
 		let allShipWeaponry = [];
+		let returnData = {
+			individual : {},
+			formatted : null
+		}
 
 		for (i=0;i<data.length;i++){
 			if (shipWeaponry.indexOf(data[i].name) !== -1){
+				returnData.individual[data[i].name] = data[i].value;
 				allShipWeaponry.push(data[i]);
 			}
 		}
 
-		let weaponData = WeaponTextGenerator(WeaponSorter(allShipWeaponry),shipWeaponrySubNames,shipWeaponry,"kills",true);
-		resolve(weaponData);
+		returnData.formatted = WeaponTextGenerator(WeaponSorter(allShipWeaponry),shipWeaponrySubNames,shipWeaponry,"kills",true);
+		resolve(returnData);
 	});
 }
 
 function weaponstats(data){
 	return new Promise((resolve,reject) => {
 		let allWeaponStats = [];
+		let returnData = {
+			individual : {},
+			formatted : null
+		}
 
 		for (i=0;i<data.length;i++){
 			if (weapons.indexOf(data[i].name) !== -1){
 				allWeaponStats.push(data[i]);
+				returnData.individual[data[i].name] = data[i].value;
 			}
 		}
 
-		let weaponData = WeaponTextGenerator(WeaponSorter(allWeaponStats),substituteNames,weapons,"kills",true);
-		resolve(weaponData);
+		returnData.formatted = WeaponTextGenerator(WeaponSorter(allWeaponStats),substituteNames,weapons,"kills",true);
+		resolve(returnData);
 	});
 }
 
