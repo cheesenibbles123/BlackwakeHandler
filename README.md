@@ -21,7 +21,7 @@ let data = await bw.handler('type','steamID64');
 - [ShipStats](#shipstats)
 - [ShipWeaponry](#shipweaponry)
 - [Maintenance](#maintenance)
-- [Misc](misc)
+- [Misc](#misc)
 
 ## Example Usage
 
