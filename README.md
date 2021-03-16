@@ -1,4 +1,4 @@
-Simple npm package to allow easier usage to blackwake commands.
+Simple npm package to allow easier access and usage of blackwake data.
 
 ## Install
 
