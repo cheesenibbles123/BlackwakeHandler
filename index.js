@@ -49,7 +49,7 @@ exports.handler = async function(type, steamID) {
 }
 
 async function checkIfPrivate(steamID){
-	let promise = new Promise ((resolve,reject) => {
+	return new Promise ((resolve,reject) => {
 		fetch(`http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${steamKey}&steamids=${steamID}`).then(resp => resp.json()).then(response => {
 			if (response.response.players.communityvisibilitystate === 1){
 				resolve(false);
@@ -58,12 +58,10 @@ async function checkIfPrivate(steamID){
 			}
 		});
 	});
-	let result = await promise;
-	return result;
 }
 
 async function queryFor(type, steamID){
-	let promise = new Promise((resolve,reject) => {
+	return new Promise((resolve,reject) => {
 		fetch(`https://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v2?key=${steamKey}&appid=420290&steamid=${steamID}`).then(resp => resp.text()).then(response => {
 			if (response.includes("500 Internal Server Error")){
 				reject("Steam API error, code 500");
@@ -101,9 +99,6 @@ async function queryFor(type, steamID){
 			}
 		});
 	});
-
-	let result = await promise;
-	return result;
 }
 
 async function overview(data){
