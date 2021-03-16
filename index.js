@@ -60,8 +60,34 @@ async function checkIfPrivate(steamID){
 	});
 }
 
+async function getType(type,stats){
+	let responseData = {
+		isValid : true,
+		type : type,
+		content : null
+	};
+	switch (type){
+		case "overview":
+			responseData.content = await overview(stats);
+			break;
+		case "shipstats":
+			responseData.content = await shipstats(stats);
+			break;
+		case "shipweaponry":
+			responseData.content = await shipweaponry(stats);
+			break;
+		case "weaponstats":
+			responseData.content = await weaponstats(stats);
+			break;
+		default:
+			responseData.isValid = false;
+			break;
+	}
+	return responseData;
+}
+
 async function queryFor(type, steamID){
-	return new Promise((resolve,reject) => {
+	let promise = new Promise((resolve,reject) => {
 		fetch(`https://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v2?key=${steamKey}&appid=420290&steamid=${steamID}`).then(resp => resp.text()).then(response => {
 			if (response.includes("500 Internal Server Error")){
 				reject("Steam API error, code 500");
@@ -72,33 +98,15 @@ async function queryFor(type, steamID){
 			}else{
 				let data = JSON.parse(response);
 				let stats = data.playerstats.stats;
-				let responseData = {
-					isValid : true,
-					type : type,
-					content : null
-				};
-				switch (type){
-					case "overview":
-						responseData.content = overview(stats);
-						break;
-					case "shipstats":
-						responseData.content = shipstats(stats);
-						break;
-					case "shipweaponry":
-						responseData.content = shipweaponry(stats);
-						break;
-					case "weaponstats":
-						responseData.content = weaponstats(stats);
-						break;
-					default:
-						responseData.isValid = false;
-						break;
-				}
+				let responseData = getType(type,stats);
 
 				resolve(responseData);
 			}
 		});
 	});
+
+	let result = await promise;
+	return result;
 }
 
 async function overview(data){
