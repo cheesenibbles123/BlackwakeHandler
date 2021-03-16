@@ -1,6 +1,6 @@
 {
   "name": "@cheesenibbles123/blackwakehandler",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Simple package to allow easier interaction with setting up and getting blackwake data through the steamapi",
   "main": "index.js",
   "scripts": {
@@ -8,10 +8,10 @@
   },
   "author": "Cheesenibbles123",
   "license": "MIT",
-  "repository" : "cheesenibbles123/BlackwakeHandler",
-  "keywords" : [
-  	"cheesenibbles123",
-  	"blackwakehandler",
-  	"blackwake"
+  "repository": "cheesenibbles123/BlackwakeHandler",
+  "keywords": [
+    "cheesenibbles123",
+    "blackwakehandler",
+    "blackwake"
   ]
 }
