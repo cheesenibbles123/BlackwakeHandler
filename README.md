@@ -24,6 +24,8 @@ let data = await bw.handler('type','steamID64');
 ## Example Usage
 
 ```js
+const Discord = require("discord.js");
+const client = new Discord.Client();
 const bw = require('@cheesenibbles123/blackwakehandler');
 
 client.on('ready', () => {
