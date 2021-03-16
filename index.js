@@ -111,67 +111,76 @@ async function queryFor(type, steamID){
 
 async function overview(data){
 	return new Promise((resolve,reject) => {
-		let kills = 0;
-		let deaths = 0;
-		let captainWins = 0;
-		let captainLosses = 0;
-		let score = 0;
-		let prestige = 0;
-		let crewHits = 0;;
 		let unassigned = true;
-		let faveWeapon = {};
 
 		let returnData = {
-			playerStats : null,
-			captainStats : null,
-			faveWeapon : null
+			playerStats : {
+				faveWeapon : {},
+				kills : 0,
+				deaths : 0,
+				score : 0,
+				prestige : 0,
+				level : 0,
+				formatted : null
+			},
+			captainStats : {
+				captainWins : 0,
+				captainLosses : 0,
+				crewHits : 0,
+				formatted: null
+			}
 		}
 
 		for (i=0;i<data.length;i++){
 
 			if (weapons.indexOf(data[i].name) !== -1){
 				if (unassigned){
-					faveWeapon = data[i];
+					returnData.playerStats.faveWeapon = data[i];
 					unassigned = false;
 				}else{
-					if (faveWeapon.value < data[i].value){
-						faveWeapon = data[i];
+					if (returnData.playerStats.faveWeapon.value < data[i].value){
+						returnData.playerStats.faveWeapon = data[i];
 					}
 				}
 			}
 
 			switch(data[i].name){
 				case "acc_kills":
-					kills = data[i].value;
+					returnData.playerStats.kills = data[i].value;
 					break;
 				case "acc_deaths":
-					deaths = data[i].value;
-					break;
-				case "acc_capWins":
-					captainWins = data[i].value;
-					break;
-				case "acc_capLose":
-					captainLosses = data[i].value;
+					returnData.playerStats.deaths = data[i].value;
 					break;
 				case "stat_score":
-					score = data[i].value;
+					returnData.playerStats.score = data[i].value;
 					break;
 				case "stat_pres":
-					prestige = data[i].value;
+					returnData.playerStats.prestige = data[i].value;
+					break;
+				case "acc_capWins":
+					returnData.captainStats.captainWins = data[i].value;
+					break;
+				case "acc_capLose":
+					returnData.captainStats.captainLosses = data[i].value;
 					break;
 				case "acc_capHit":
-					crewHits = data[i].value;
+					returnData.captainStats.crewHits = data[i].value;
 					break;
 				default:
 					break;
 			}
 		}
 
-		let level = levelProgress(score, prestige);
+		returnData.playerStats.level = levelProgress(returnData.playerStats.score, returnData.playerStats.prestige);
+		console.log(returnData.playerStats.faveWeapon);
+		returnData.playerStats.faveWeapon = { 
+			ID : returnData.playerStats.faveWeapon.name,
+			Amount : returnData.playerStats.faveWeapon.value,
+			formatted : WeaponTextGenerator([returnData.playerStats.faveWeapon], substituteNames, weapons,"",false)
+		}
 
-		returnData.playerStats = `${kills} kills\n${deaths} deaths\nKD of ${kills/deaths}\nScore: ${score}\nLevel: (${prestige}) ${level}`;
-		returnData.captainStats = `${captainWins} wins\n${captainLosses} losses\nRatio: ${captainWins/captainLosses}\nCrew Hits: ${crewHits}`;
-		returnData.faveWeapon = faveWeapon;
+		returnData.playerStats.formatted = `${returnData.playerStats.kills} kills\n${returnData.playerStats.deaths} deaths\nKD of ${returnData.playerStats.kills/returnData.playerStats.deaths}\nScore: ${returnData.playerStats.score}\nLevel: (${returnData.playerStats.prestige}) ${returnData.playerStats.level}`;
+		returnData.captainStats.formatted = `${returnData.captainStats.captainWins} wins\n${returnData.captainStats.captainLosses} losses\nRatio: ${returnData.captainStats.captainWins/returnData.captainStats.captainLosses}\nCrew Hits: ${returnData.captainStats.crewHits}`;
 		resolve(returnData);
 	});
 }
@@ -179,25 +188,37 @@ async function overview(data){
 async function shipstats(data){
 	return new Promise((resolve,reject) => {
 		let shipStats = [];
-		let captainLosses;
-		let captainWins;
+		let returnData = {
+			ships : {
+				formatted : null
+			},
+			general : {
+				captainWins : 0,
+				untrackedWins : 0,
+				captainLosses : 0,
+				ratio : 0,
+				formatted : null
+			}
+		}
 
 		for (i=0;i<data.length;i++){
 			if (ships.indexOf(data[i].name) !== -1){
 				shipStats.push(data[i]);
+				returnData.ships[data[i].name] = data[i].value;
 			}else if (data[i].name === "acc_capWins"){
-				captainWins = data[i].value;
+				returnData.general.captainWins = data[i].value;
 			}else if (data[i].name === "acc_capLose"){
-				captainLosses = data[i].value;
+				returnData.general.captainLosses = data[i].value;
 			}
 		}
 
 		let ShipStats = WeaponTextGenerator(WeaponSorter(shipStats),subShipNames,ships,"wins",true);
-		let untrackedWins = parseInt(captainWins) - parseInt(ShipStats.split("Total: ")[1]);
-		let returnData = {
-			ships : `${ShipStats}`,
-			general : `Wins: ${captainWins}\n - Untracked: ${untrackedWins}\nLosses: ${captainLosses}\nWin Rate: ${captainWins/captainLosses}`
-		}
+		returnData.general.untrackedWins = parseInt(returnData.general.captainWins) - parseInt(ShipStats.split("Total: ")[1]);
+
+		returnData.general.ratio = returnData.general.captainWins/returnData.general.captainLosses;
+		returnData.general.formatted = `Wins: ${returnData.general.captainWins}\n - Untracked: ${returnData.general.untrackedWins}\nLosses: ${returnData.general.captainLosses}\nWin Rate: ${returnData.general.ratio}`;
+		returnData.ships.formatted = `${ShipStats}`;
+
 		resolve(returnData);
 	});
 }
