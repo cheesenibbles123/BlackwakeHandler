@@ -7,5 +7,11 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Cheesenibbles123",
-  "license": "ISC"
+  "license": "MIT",
+  "repository" : "cheesenibbles123/BlackwakeHandler",
+  "keywords" : [
+  	"cheesenibbles123",
+  	"blackwakehandler",
+  	"blackwake"
+  ]
 }
