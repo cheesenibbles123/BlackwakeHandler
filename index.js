@@ -26,8 +26,8 @@ exports.init = function(obj){
 }
 
 function validateString(tests){
-	for (let item in tests){
-		if (typeof(item) !== "string"){
+	for (i=0;i<tests.length;i++){
+		if (typeof(tests[i]) !== "string"){
 			return false;
 		}
 	}
@@ -39,12 +39,15 @@ exports.handler = async function(type, steamID) {
 		let public = await checkIfPrivate(steamID);
 		if (public){
 			let data = await queryFor(type.toLowerCase(),steamID);
+			if (data === null){
+				data = {isValid : false, type : type, content : "Null Response"};
+			}
 			return data;
 		}else{
-			return "User profile is set to private.";
+			return {isValid : false, type : type, content : "User profile set to private"};;
 		}
 	}else{
-		throw new Error('Incorrect input type. Should be a string array.');
+		return {isValid : false, type : type, content : "Incorrect input type. Should be a string."};
 	}
 }
 
@@ -81,6 +84,7 @@ async function getType(type,stats){
 			break;
 		default:
 			responseData.isValid = false;
+			responseData.content = "Invalid option";
 			break;
 	}
 	return responseData;
