@@ -37,6 +37,7 @@ function validateString(tests){
 exports.handler = async function(type, steamID) {
 	if (validateString([type,steamID])){
 		let public = await checkIfPrivate(steamID);
+		console.log(public);
 		if (public){
 			let data = await queryFor(type.toLowerCase(),steamID);
 			return data;
@@ -48,160 +49,185 @@ exports.handler = async function(type, steamID) {
 	}
 }
 
-function checkIfPrivate(steamID){
-	fetch(`http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${steamKey}&steamids=${steamID}`).then(resp => resp.json()).then(response => {
-		if (response.response.players.communityvisibilitystate === 1){
-			return false;
-		}else{
-			return true;
-		}
-	});
-}
-
-function queryFor(type, steamID){
-	fetch(`https://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v2?key=${steamKey}&appid=420290&steamid=${steamID}`).then(resp => resp.text()).then(response => {
-		if (response.includes("500 Internal Server Error")){
-			return "Steam API error, code 500";
-		}else if (response.includes("Unknown problem determining WebApi request destination.")) {
-			return "Please ensure you have entered the correct terms! Terms can be found using `;help` `blackwake`.\nThe format is as followed:\n`;blackwake` `term` `steamID64`";
-		}else if(response[0] == '<') {
-			return "Error - Unknown issue";
-		}else{
-			let data = JSON.parse(response);
-			let stats = data.playerstats.stats;
-			let responseData = {
-				isValid : true,
-				type : type,
-				content : null
-			};
-			switch (type){
-				case "overview":
-					content = overview(stats);
-					break;
-				case "shipstats":
-					content = shipstats(stats);
-					break;
-				case "shipweaponry":
-					content = shipweaponry(stats);
-					break;
-				case "weaponstats":
-					content = weaponstats(stats);
-					break;
-				default:
-					responseData.isValid = false;
-					break;
-			}
-
-			return content;
-		}
-	});
-}
-
-function overview(data){
-	let kills = 0;
-	let deaths = 0;
-	let captainWins = 0;
-	let captainLosses = 0;
-	let score = 0;
-	let prestige = 0;
-	let crewHits = 0;;
-	let unassigned = true;
-	let faveWeap = {};
-
-	let returnData = {
-		playerStats : null,
-		captainStats : null,
-		faveWeapon : null
-	}
-
-	for (i=0;i<data.length;i++){
-
-		if (weapons.indexOf(stats[i].name) !== -1){
-			if (unassigned){
-				faveWeap = stats[i];
-				unassigned = false;
+async function checkIfPrivate(steamID){
+	let promise = new Promise ((resolve,reject) => {
+		fetch(`http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${steamKey}&steamids=${steamID}`).then(resp => resp.json()).then(response => {
+			if (response.response.players.communityvisibilitystate === 1){
+				resolve(false);
 			}else{
-				if (faveWeap.value < stats[i].value){
-					faveWeap = stats[i];
+				resolve(true);
+			}
+		});
+	});
+	let result = await promise;
+	return result;
+}
+
+async function queryFor(type, steamID){
+	let promise = new Promise((resolve,reject) => {
+		fetch(`https://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v2?key=${steamKey}&appid=420290&steamid=${steamID}`).then(resp => resp.text()).then(response => {
+			if (response.includes("500 Internal Server Error")){
+				reject("Steam API error, code 500");
+			}else if (response.includes("Unknown problem determining WebApi request destination.")) {
+				reject("Please ensure you have entered the correct terms! Terms can be found using `;help` `blackwake`.\nThe format is as followed:\n`;blackwake` `term` `steamID64`");
+			}else if(response[0] == '<') {
+				reject("Error - Unknown issue");
+			}else{
+				let data = JSON.parse(response);
+				let stats = data.playerstats.stats;
+				let responseData = {
+					isValid : true,
+					type : type,
+					content : null
+				};
+				switch (type){
+					case "overview":
+						responseData.content = overview(stats);
+						break;
+					case "shipstats":
+						responseData.content = shipstats(stats);
+						break;
+					case "shipweaponry":
+						responseData.content = shipweaponry(stats);
+						break;
+					case "weaponstats":
+						responseData.content = weaponstats(stats);
+						break;
+					default:
+						responseData.isValid = false;
+						break;
+				}
+
+				resolve(responseData);
+			}
+		});
+	});
+
+	let result = await promise;
+	return result;
+}
+
+async function overview(data){
+	return new Promise((resolve,reject) => {
+		let kills = 0;
+		let deaths = 0;
+		let captainWins = 0;
+		let captainLosses = 0;
+		let score = 0;
+		let prestige = 0;
+		let crewHits = 0;;
+		let unassigned = true;
+		let faveWeapon = {};
+
+		let returnData = {
+			playerStats : null,
+			captainStats : null,
+			faveWeapon : null
+		}
+
+		for (i=0;i<data.length;i++){
+
+			if (weapons.indexOf(data[i].name) !== -1){
+				if (unassigned){
+					faveWeapon = data[i];
+					unassigned = false;
+				}else{
+					if (faveWeapon.value < data[i].value){
+						faveWeapon = data[i];
+					}
 				}
 			}
+
+			switch(data[i].name){
+				case "acc_kills":
+					kills = data[i].value;
+					break;
+				case "acc_deaths":
+					deaths = data[i].value;
+					break;
+				case "acc_capWins":
+					captainWins = data[i].value;
+					break;
+				case "acc_capLose":
+					captainLosses = data[i].value;
+					break;
+				case "stat_score":
+					score = data[i].value;
+					break;
+				case "stat_pres":
+					prestige = data[i].value;
+					break;
+				case "acc_capHit":
+					crewHits = data[i].value;
+					break;
+				default:
+					break;
+			}
 		}
 
-		switch(data[i].name){
-			case "acc_kills":
-				kills = data[i].value;
-				break;
-			case "acc_deaths":
-				deaths = data[i].value;
-				break;
-			case "acc_capWins":
-				captainWins = data[i].value;
-				break;
-			case "acc_capLose":
-				captainLosses = data[i].value;
-				break;
-			case "stat_score":
-				score = data[i].value;
-				break;
-			case "stat_pres":
-				prestige = data[i].value;
-				break;
-			case "acc_capHit":
-				crewHits = data[i].value;
-				break;
-			default:
-				break;
-		}
-	}
+		let level = levelProgress(score, prestige);
 
-	returnData.playerStats = `${kills} kills\n${deaths} deaths\n KD of ${kills/deaths}\nScore: ${score}\nLevel: (${prestige}) ${level}`;
-	returnData.captainStats = `${captainWins} wins\n${captainLosses} losses\nRatio: ${captainWins/captainLosses}\nCrew Hits: ${crewHits}`;
-	returnData.faveWeapon = faveWeapon;
-	return returnData;
+		returnData.playerStats = `${kills} kills\n${deaths} deaths\nKD of ${kills/deaths}\nScore: ${score}\nLevel: (${prestige}) ${level}`;
+		returnData.captainStats = `${captainWins} wins\n${captainLosses} losses\nRatio: ${captainWins/captainLosses}\nCrew Hits: ${crewHits}`;
+		returnData.faveWeapon = faveWeapon;
+		resolve(returnData);
+	});
 }
 
-function shipstats(data){
-	let shipStats = [];
+async function shipstats(data){
+	return new Promise((resolve,reject) => {
+		let shipStats = [];
+		let captainLosses;
+		let captainWins;
 
-	for (i=0;i<data.length;i++){
-		if (ships.indexOf(stats[i].name) !== -1){
-			shipStats.push(stats[i]);
+		for (i=0;i<data.length;i++){
+			if (ships.indexOf(data[i].name) !== -1){
+				shipStats.push(data[i]);
+			}else if (data[i].name === "acc_capWins"){
+				captainWins = data[i].value;
+			}else if (data[i].name === "acc_capLose"){
+				captainLosses = data[i].value;
+			}
 		}
-	}
 
-	let ShipStats = WeaponTextGenerator(WeaponSorter(shipStats),subShipNames,ships,"wins",true);
-	let untrackedWins = parseInt(captainWins) - parseInt(ShipStats.split("Total: ")[1]);
-	let returnData = {
-		ships : `${ShipStats}`,
-		general : `Wins: ${captainWins}\n - Untracked: ${untrackedWins}\nLosses: ${captainLosses}\nWin Rate: ${captainWins/captainLosses}`
-	}
-	return returnData;
+		let ShipStats = WeaponTextGenerator(WeaponSorter(shipStats),subShipNames,ships,"wins",true);
+		let untrackedWins = parseInt(captainWins) - parseInt(ShipStats.split("Total: ")[1]);
+		let returnData = {
+			ships : `${ShipStats}`,
+			general : `Wins: ${captainWins}\n - Untracked: ${untrackedWins}\nLosses: ${captainLosses}\nWin Rate: ${captainWins/captainLosses}`
+		}
+		resolve(returnData);
+	});
 }
 
 function shipweaponry(data){
-	let allShipWeaponry = [];
+	return new Promise((resolve,reject) => {
+		let allShipWeaponry = [];
 
-	for (i=0;i<data.length;i++){
-		if (weapons.indexOf(stats[i].name) !== -1){
-			allShipWeaponry.push(stats[i]);
+		for (i=0;i<data.length;i++){
+			if (shipWeaponry.indexOf(data[i].name) !== -1){
+				allShipWeaponry.push(data[i]);
+			}
 		}
-	}
 
-	let weaponData = WeaponTextGenerator(WeaponSorter(allShipWeaponry),substituteNames,weapons,"kills",true);
-	return weaponData;
+		let weaponData = WeaponTextGenerator(WeaponSorter(allShipWeaponry),shipWeaponrySubNames,shipWeaponry,"kills",true);
+		resolve(weaponData);
+	});
 }
 
 function weaponstats(data){
-	let allWeaponStats = [];
+	return new Promise((resolve,reject) => {
+		let allWeaponStats = [];
 
-	for (i=0;i<data.length;i++){
-		if (weapons.indexOf(stats[i].name) !== -1){
-			allWeaponStats.push(stats[i]);
+		for (i=0;i<data.length;i++){
+			if (weapons.indexOf(data[i].name) !== -1){
+				allWeaponStats.push(data[i]);
+			}
 		}
-	}
 
-	let weaponData = WeaponTextGenerator(WeaponSorter(allWeaponStats),substituteNames,weapons,"kills",true);
-	return weaponData;
+		let weaponData = WeaponTextGenerator(WeaponSorter(allWeaponStats),substituteNames,weapons,"kills",true);
+		resolve(weaponData);
+	});
 }
 
 function levelProgress(score, prestige){
