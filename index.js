@@ -21,7 +21,7 @@ exports.init = function(obj){
 	if (validateString([obj])){
 		steamKey = obj;
 	}else{
-		throw new Error('Incorrect input type. Should be a string.');
+		throw new Error('Incorrect steamAPIKey type given. Should be a string.');
 	}
 }
 
