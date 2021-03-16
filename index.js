@@ -82,6 +82,12 @@ async function getType(type,stats){
 		case "weaponstats":
 			responseData.content = await weaponstats(stats);
 			break;
+		case "maintenance":
+			responseData.content = await maintenanceFunc(stats);
+			break;
+		case "misc":
+			responseData.content = await misc(stats);
+			break;
 		default:
 			responseData.isValid = false;
 			responseData.content = "Invalid option";
@@ -263,6 +269,46 @@ function weaponstats(data){
 		}
 
 		returnData.formatted = WeaponTextGenerator(WeaponSorter(allWeaponStats),substituteNames,weapons,"kills",true);
+		resolve(returnData);
+	});
+}
+
+function maintenanceFunc(data){
+	return new Promise((resolve,reject) => {
+		let allStats = [];
+		let returnData = {
+			individual : {},
+			formatted : null
+		}
+
+		for (i=0;i<data.length;i++){
+			if (maintenance.indexOf(data[i].name) !== -1){
+				allStats.push(data[i]);
+				returnData.individual[data[i].name] = data[i].value;
+			}
+		}
+
+		returnData.formatted = WeaponTextGenerator(WeaponSorter(allStats),subMaintain,maintenance,"kills",false);
+		resolve(returnData);
+	});
+}
+
+function misc(data){
+	return new Promise((resolve,reject) => {
+		let allMiscStats = [];
+		let returnData = {
+			individual : {},
+			formatted : null
+		}
+
+		for (i=0;i<data.length;i++){
+			if (miscList.indexOf(data[i].name) !== -1){
+				allMiscStats.push(data[i]);
+				returnData.individual[data[i].name] = data[i].value;
+			}
+		}
+
+		returnData.formatted = WeaponTextGenerator(WeaponSorter(allMiscStats),subMiscList,miscList,"kills",false);
 		resolve(returnData);
 	});
 }
