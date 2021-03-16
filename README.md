@@ -203,3 +203,37 @@ Fail
 	}
 }
 ```
+
+### Maintenance
+
+```js
+{
+  isValid: true,
+  type: 'maintenance',
+  content: {
+    individual: {
+      acc_rep: 40319,
+      acc_pump: 89393,
+      acc_sail: 6332,
+      acc_noseRep: 4419
+    },
+    formatted: 'Pumping - 89393 kills\n' +
+      'Hole Repairs - 40319 kills\n' +
+      'Sail Repairs - 6332 kills\n' +
+      'Nose Repairs - 4419 kills\n'
+  }
+}
+```
+
+### Misc
+
+```js
+{
+  isValid: true,
+  type: 'misc',
+  content: {
+    individual: { acc_head: 2891, acc_sup: 12236 },
+    formatted: 'Supplies - 12236 kills\nHeadshots - 2891 kills\n'
+  }
+}
+```
