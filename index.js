@@ -288,7 +288,7 @@ function maintenanceFunc(data){
 			}
 		}
 
-		returnData.formatted = WeaponTextGenerator(WeaponSorter(allStats),subMaintain,maintenance,"kills",false);
+		returnData.formatted = WeaponTextGenerator(WeaponSorter(allStats),subMaintain,maintenance,"",false);
 		resolve(returnData);
 	});
 }
