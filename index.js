@@ -308,7 +308,7 @@ function misc(data){
 			}
 		}
 
-		returnData.formatted = WeaponTextGenerator(WeaponSorter(allMiscStats),subMiscList,miscList,"kills",false);
+		returnData.formatted = WeaponTextGenerator(WeaponSorter(allMiscStats),subMiscList,miscList,"",false);
 		resolve(returnData);
 	});
 }
