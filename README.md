@@ -218,10 +218,10 @@ Fail
       acc_sail: 6332,
       acc_noseRep: 4419
     },
-    formatted: 'Pumping - 89393 kills\n' +
-      'Hole Repairs - 40319 kills\n' +
-      'Sail Repairs - 6332 kills\n' +
-      'Nose Repairs - 4419 kills\n'
+    formatted: 'Pumping - 89393\n' +
+      'Hole Repairs - 40319\n' +
+      'Sail Repairs - 6332\n' +
+      'Nose Repairs - 4419\n'
   }
 }
 ```
@@ -234,7 +234,7 @@ Fail
   type: 'misc',
   content: {
     individual: { acc_head: 2891, acc_sup: 12236 },
-    formatted: 'Supplies - 12236 kills\nHeadshots - 2891 kills\n'
+    formatted: 'Supplies - 12236\nHeadshots - 2891\n'
   }
 }
 ```
